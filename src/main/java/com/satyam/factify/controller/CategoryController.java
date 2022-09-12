@@ -41,7 +41,7 @@ public class CategoryController {
 	}
 	
 	@PutMapping("/{id}")
-	public Category createCategory(@PathVariable("id") int id, @RequestBody Category category) {
+	public Category updateCategory(@PathVariable("id") int id, @RequestBody Category category) {
 		category.setId(id);
 		categoryService.createCategory(category);
 		return category;
@@ -55,7 +55,7 @@ public class CategoryController {
 		if(category == null) {
 			throw new RuntimeException("Category with the given id not found - " + id);
 		}
-		System.out.println(category);
+		
 		categoryService.deleteCategory(id);
 		
 		return category;
