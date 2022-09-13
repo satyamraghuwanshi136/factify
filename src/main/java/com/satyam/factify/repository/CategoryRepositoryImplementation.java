@@ -36,6 +36,7 @@ public class CategoryRepositoryImplementation implements CategoryRepository {
 	public void createCategory(Category category) {
 		// TODO Auto-generated method stub
 		Session session = entityManager.unwrap(Session.class);
+		
 		session.saveOrUpdate(category);
 	}
 
@@ -58,7 +59,18 @@ public class CategoryRepositoryImplementation implements CategoryRepository {
 		
 		query.executeUpdate();
 	}
-	
-	
+
+
+	@Override
+	public Category findCategoryByName(String name) {
+		Session session = entityManager.unwrap(Session.class);
+
+		Query query = session.createQuery("from Category where name=:categoryName");
+		query.setParameter("categoryName", name);
+		
+		Category newCategory = (Category) query.uniqueResult();
+		
+		return newCategory;
+	}
 
 }

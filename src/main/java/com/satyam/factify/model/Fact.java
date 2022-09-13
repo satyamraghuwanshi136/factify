@@ -10,9 +10,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -26,6 +29,8 @@ public class Fact {
 	private int id;
 	
 	@Column(name = "message", nullable = false)
+	@NotEmpty(message = "message can not be empty")
+	@NotNull(message = "Fact can not be null")
 	private String message;
 	
 	

@@ -2,6 +2,9 @@ package com.satyam.factify.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.springframework.beans.factory.FactoryBeanNotInitializedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,7 +43,7 @@ public class FactController {
 	}
 	
 	@PostMapping("/{categoryId}")
-	public Fact createFact(@PathVariable("categoryId") int categoryId, @RequestBody Fact fact) {
+	public Fact createFact(@PathVariable("categoryId") int categoryId,@Valid @NotNull @RequestBody Fact fact) {
 		fact.setId(0);
 		Category category =  categoryService.findCategoryById(categoryId);
 		
@@ -55,7 +58,7 @@ public class FactController {
 	}
 	
 	@PutMapping("/{categoryId}/{factId}")
-	public Fact updateFact(@PathVariable("categoryId") int categoryId, @PathVariable("factId") int factId, @RequestBody Fact fact) {
+	public Fact updateFact(@PathVariable("categoryId") int categoryId, @PathVariable("factId") int factId,@Valid @NotNull @RequestBody Fact fact) {
 		fact.setId(factId);
 		Category category =  categoryService.findCategoryById(categoryId);
 		

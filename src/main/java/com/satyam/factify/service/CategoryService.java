@@ -10,5 +10,6 @@ public interface CategoryService {
 	public void createCategory(Category category);
 	public Category findCategoryById(int id);
 	public void deleteCategory(int id);
+	public Category findCategoryByName(String name);
 
 }

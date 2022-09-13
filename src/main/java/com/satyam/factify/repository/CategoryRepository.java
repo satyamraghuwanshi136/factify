@@ -13,4 +13,6 @@ public interface CategoryRepository {
 	public Category findCategoryById(int id);
 	
 	public void deleteCategory(int id);
+	
+	public Category findCategoryByName(String name);
 }
