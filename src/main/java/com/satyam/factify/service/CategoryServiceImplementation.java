@@ -14,9 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.satyam.factify.exceptionhandling.CategoryAlreadyExistsException;
+import com.satyam.factify.exceptionhandling.CategoryNotFoundException;
 import com.satyam.factify.exceptionhandling.ErrorResponse;
-import com.satyam.factify.exceptionhandling.category.CategoryAlreadyExistsException;
-import com.satyam.factify.exceptionhandling.category.CategoryNotFoundException;
 import com.satyam.factify.model.Category;
 import com.satyam.factify.repository.CategoryRepository;
 
@@ -36,8 +36,26 @@ public class CategoryServiceImplementation implements CategoryService {
 	@Override
 	@Transactional
 	public void createCategory(Category category) {
+		Category newCategory = categoryRepository.findCategoryByName(category.getName());
+		
+		if(newCategory != null) {
+			throw new CategoryAlreadyExistsException("Category with the given name already exists. Category name must be unique.");
+		}
 		categoryRepository.createCategory(category);
 	}
+	
+	@Override
+	@Transactional
+	public void updateCategory(int id, Category category) {
+		Category newCategory = categoryRepository.findCategoryById(id);
+		
+		if (newCategory == null) {
+			throw new CategoryNotFoundException("Category with the given ID not Found. ID: " + id);
+		}
+		
+		categoryRepository.updateCategory(category);
+	}
+	
 
 	@Override
 	@Transactional
@@ -61,6 +79,7 @@ public class CategoryServiceImplementation implements CategoryService {
 	}
 
 	@Override
+	@Transactional
 	public Category findCategoryByName(String name) {
 		Category category = categoryRepository.findCategoryByName(name);
 		
@@ -70,5 +89,6 @@ public class CategoryServiceImplementation implements CategoryService {
 		
 		return category;
 	}
+
 
 }

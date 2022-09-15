@@ -39,7 +39,13 @@ public class FactRepositoryImplementation implements FactRepository {
 		Session session = entityManager.unwrap(Session.class);
 //		Category category = categoryService.findCategoryById(fact.getCategory().getId());
 //		System.out.prinln(fact);
-		session.saveOrUpdate(fact);
+		session.save(fact);
+	}
+	
+	@Override
+	public void updateFact(Fact fact) {
+		Session session = entityManager.unwrap(Session.class);
+		session.merge(fact);
 	}
 
 	@Override
@@ -58,5 +64,7 @@ public class FactRepositoryImplementation implements FactRepository {
 		
 		query.executeUpdate();
 	}
+
+
 
 }

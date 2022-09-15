@@ -7,6 +7,8 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.FactoryBeanNotInitializedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.satyam.factify.exceptionhandling.CategoryNotFoundException;
 import com.satyam.factify.model.Category;
 import com.satyam.factify.model.Fact;
 import com.satyam.factify.service.CategoryService;
@@ -33,56 +36,53 @@ public class FactController {
 	private CategoryService categoryService;
 
 	@GetMapping("/all")
-	public List<Fact> getAllFacts() {
-		return factService.findAll();
+	public ResponseEntity<List<Fact>> getAllFacts() {
+		List<Fact> facts =  factService.findAll();
+		return new ResponseEntity<List<Fact>>(facts, HttpStatus.OK);
 	}
 	
 	@GetMapping("/{id}")
-	public Fact findFactById(@PathVariable("id") int id) {
-		return factService.findFactById(id);
+	public ResponseEntity<Fact> findFactById(@PathVariable("id") int id) {
+		Fact fact = factService.findFactById(id);
+		return new ResponseEntity<Fact>(fact, HttpStatus.OK);
 	}
 	
 	@PostMapping("/{categoryId}")
-	public Fact createFact(@PathVariable("categoryId") int categoryId,@Valid @NotNull @RequestBody Fact fact) {
+	public ResponseEntity<Fact> createFact(@PathVariable("categoryId") int categoryId,@Valid @NotNull @RequestBody Fact fact) {
 		fact.setId(0);
 		Category category =  categoryService.findCategoryById(categoryId);
 		
 		if(category == null) {
-			throw new RuntimeException("Category with the given id not found - " + categoryId);
+			throw new CategoryNotFoundException("Category with the given id not found - " + categoryId);
 		}
 		
 		fact.setCategory(category);
 		
 		factService.createFact(fact);
-		return fact;
+		
+		return new ResponseEntity<Fact>(fact, HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/{categoryId}/{factId}")
-	public Fact updateFact(@PathVariable("categoryId") int categoryId, @PathVariable("factId") int factId,@Valid @NotNull @RequestBody Fact fact) {
+	public ResponseEntity<Fact> updateFact(@PathVariable("categoryId") int categoryId, @PathVariable("factId") int factId,@Valid @NotNull @RequestBody Fact fact) {
 		fact.setId(factId);
 		Category category =  categoryService.findCategoryById(categoryId);
 		
 		if(category == null) {
-			throw new RuntimeException("Category with the given id not found - " + categoryId);
+			throw new CategoryNotFoundException("Category with the given id not found - " + categoryId);
 		}
 		
+		
 		fact.setCategory(category);
-		factService.createFact(fact);
-		return fact;
+		factService.updateFact(factId, fact);
+		return new ResponseEntity<Fact>(fact, HttpStatus.CREATED);
 	}
 	
 	@DeleteMapping("/{id}")
-	public Fact deleteCategory(@PathVariable("id") int id) {
-		Fact fact =  factService.findFactById(id);
-		
-		
-		if(fact == null) {
-			throw new RuntimeException("Fact with the given id not found - " + id);
-		}
-	
+	public ResponseEntity<String> deleteCategory(@PathVariable("id") int id) {
 		factService.deleteFact(id);
-		
-		return fact;
+		String message = "Fact with the given ID : " + id + " is deleted successfully.";
+		return new ResponseEntity<String>(message, HttpStatus.OK);
 	}
 	
 	

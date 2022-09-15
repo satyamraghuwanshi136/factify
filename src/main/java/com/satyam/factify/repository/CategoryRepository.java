@@ -15,4 +15,6 @@ public interface CategoryRepository {
 	public void deleteCategory(int id);
 	
 	public Category findCategoryByName(String name);
+
+	void updateCategory(Category category);
 }

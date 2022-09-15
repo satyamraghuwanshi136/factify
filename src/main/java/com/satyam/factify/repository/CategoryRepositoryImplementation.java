@@ -37,7 +37,15 @@ public class CategoryRepositoryImplementation implements CategoryRepository {
 		// TODO Auto-generated method stub
 		Session session = entityManager.unwrap(Session.class);
 		
-		session.saveOrUpdate(category);
+		session.save(category);
+	}
+	
+	@Override
+	public void updateCategory(Category category) {
+		// TODO Auto-generated method stub
+		Session session = entityManager.unwrap(Session.class);
+		
+		session.merge(category);
 	}
 
 

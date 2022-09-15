@@ -1,4 +1,4 @@
-package com.satyam.factify.exceptionhandling.category;
+package com.satyam.factify.exceptionhandling;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -7,16 +7,15 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import com.satyam.factify.exceptionhandling.ErrorResponse;
-import com.satyam.factify.exceptionhandling.ValidationErrorResponse;
 
 @ControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler{
@@ -52,7 +51,25 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler{
 			return new ResponseEntity<Object>(errorResponse, HttpStatus.BAD_REQUEST);
 		
 	}
+	
+	@ExceptionHandler(FactNotFoundException.class)
+	public ResponseEntity<ErrorResponse> handleFactNotFoundException(CategoryNotFoundException exception) {
+		ErrorResponse errorResponse = new ErrorResponse();
 
+		errorResponse.setStatus(HttpStatus.NOT_FOUND.toString());
+		errorResponse.setMessage(exception.getMessage());
+		errorResponse.setTimeStamp(new SimpleDateFormat("dd-MM-yyyy HH-mm-ss").format(new java.util.Date()));
+
+		return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+	}
+	
+	@Override	
+	protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers,
+			HttpStatus status, WebRequest request) {
+		// TODO Auto-generated method stub
+		return new ResponseEntity<Object>("path does not exists", HttpStatus.NOT_FOUND);
+	}
+	
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> handleCommonException(Exception exception,
 		HttpServletRequest httpServletRequest) {

@@ -1,4 +1,4 @@
-package com.satyam.factify.exceptionhandling.category;
+package com.satyam.factify.exceptionhandling;
 
 
 public class CategoryAlreadyExistsException extends RuntimeException{

@@ -14,4 +14,6 @@ public interface FactRepository {
 	public Fact findFactById(int id);
 	
 	public void deleteFact(int id);
+
+	public void updateFact(Fact fact);
 }
