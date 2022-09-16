@@ -1,22 +1,13 @@
 package com.satyam.factify.service;
 
-import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.util.List;
-
-import javax.transaction.Transactional;
-import javax.validation.Valid;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.satyam.factify.exceptionhandling.CategoryAlreadyExistsException;
 import com.satyam.factify.exceptionhandling.CategoryNotFoundException;
-import com.satyam.factify.exceptionhandling.ErrorResponse;
 import com.satyam.factify.model.Category;
 import com.satyam.factify.repository.CategoryRepository;
 
@@ -28,72 +19,67 @@ public class CategoryServiceImplementation implements CategoryService {
 	private CategoryRepository categoryRepository;
 	
 	@Override
-	@Transactional
 	public List<Category> findAll() {
 		return categoryRepository.findAll();
 	}
 
 	@Override
-	@Transactional
 	public Category createCategory(Category category) {
-		Category newCategory = categoryRepository.findCategoryByName(category.getName());
+		List<Category> newCategory = categoryRepository.findByName(category.getName());
 		
-		if(newCategory != null) {
+		if(!newCategory.isEmpty()) {
 			throw new CategoryAlreadyExistsException("Category with the given name already exists. Category name must be unique.");
 		}
-		return categoryRepository.createCategory(category);
+		return categoryRepository.save(category);
 	}
 	
 	@Override
-	@Transactional
 	public Category updateCategory(int id, Category category) {
-		Category newCategory = categoryRepository.findCategoryById(id);
+		Optional<Category> result = categoryRepository.findById(id);
 		
-		if (newCategory == null) {
+		if (!result.isPresent()) {
 			throw new CategoryNotFoundException("Category with the given ID not Found. ID: " + id);
 		}
 		
-		Category dbCategory = categoryRepository.findCategoryByName(category.getName());
+		List<Category> dbCategory = categoryRepository.findByName(category.getName());
 		
-		if(dbCategory != null) {
+		if(!dbCategory.isEmpty()) {
 			throw new CategoryAlreadyExistsException("Category with the given name already exists. Category name must be unique.");
 		}
 		
-		return categoryRepository.updateCategory(category);
+		return categoryRepository.save(category);
 	}
 	
 
 	@Override
-	@Transactional
 	public Category findCategoryById(int id) {
 		
-		Category category = categoryRepository.findCategoryById(id);
-		if (category == null) {
+		Optional<Category> category = categoryRepository.findById(id);
+		
+		if (!category.isPresent()) {
 			throw new CategoryNotFoundException("Category with the given ID not Found. ID: " + id);
 		}
-		return category;
+		return category.get();
 	}
 	
 	@Override
-	@Transactional
 	public void deleteCategory(int id) {
-		Category category = categoryRepository.findCategoryById(id);
-		if (category == null) {
+		Optional<Category> category = categoryRepository.findById(id);
+		if (!category.isPresent()) {
 			throw new CategoryNotFoundException("Category with the given ID not Found. ID: " + id);
 		}
-		categoryRepository.deleteCategory(id);
+		categoryRepository.deleteById(id);
 	}
 
 	@Override
-	@Transactional
 	public Category findCategoryByName(String name) {
-		Category category = categoryRepository.findCategoryByName(name);
+		List<Category> category = categoryRepository.findByName(name);
 		
-		if(category == null) {
+		if(category.isEmpty()) {
 			throw new CategoryNotFoundException("Category With the name: " + name + " not found.");
 		}
 		
-		return category;
+		return category.get(0);
 	}
 
 

@@ -1,6 +1,7 @@
 package com.satyam.factify.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -24,42 +25,38 @@ public class FactServiceImplementation implements FactService {
 	}
 
 	@Override
-	@Transactional
 	public Fact createFact(Fact fact) {
-		return factRepository.createFact(fact);
+		return factRepository.save(fact);
 	}
 	
 	@Override
-	@Transactional
 	public Fact updateFact(int factId, Fact fact) {
-		Fact newFact = factRepository.findFactById(factId);
+		Optional<Fact> newFact = factRepository.findById(factId);
 		
-		if(newFact == null) {
+		if(!newFact.isPresent()) {
 			throw new FactNotFoundException("Fact with the given ID: "+ factId + " does Not Found");
 		}
-		return factRepository.updateFact(fact);
+		return factRepository.save(fact);
 	}
 
 	@Override
-	@Transactional
 	public Fact findFactById(int id) {
-		Fact fact = factRepository.findFactById(id);
-		if(fact == null) {
+		Optional<Fact> fact = factRepository.findById(id);
+		if(!fact.isPresent()) {
 			throw new FactNotFoundException("Fact with the given ID: "+ id + " does Not Found");
 		}
-		return factRepository.findFactById(id);
+		return fact.get();
 	}
 
 	@Override
-	@Transactional
 	public void deleteFact(int id) {
-		Fact fact =  factRepository.findFactById(id);
+		Optional<Fact> fact =  factRepository.findById(id);
 			
-		if(fact == null) {
+		if(!fact.isPresent()) {
 			throw new FactNotFoundException("Fact with the given ID: "+ id + " does Not Found");
 		}
 	
-		factRepository.deleteFact(id);
+		factRepository.deleteById(id);
 	}
 
 }
