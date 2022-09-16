@@ -3,9 +3,9 @@ package com.satyam.factify.repository;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
-import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -21,10 +21,7 @@ public class CategoryRepositoryImplementation implements CategoryRepository {
 
 	@Override
 	public List<Category> findAll() {
-		// TODO Auto-generated method stub
-		Session session = entityManager.unwrap(Session.class);
-		
-		Query<Category> query = session.createQuery("from Category", Category.class);
+		TypedQuery<Category> query = entityManager.createQuery("from Category", Category.class);
 		
 		List<Category> categories = query.getResultList();
 		
@@ -33,36 +30,27 @@ public class CategoryRepositoryImplementation implements CategoryRepository {
 
 
 	@Override
-	public void createCategory(Category category) {
-		// TODO Auto-generated method stub
-		Session session = entityManager.unwrap(Session.class);
-		
-		session.save(category);
+	public Category createCategory(Category category) {
+		return entityManager.merge(category);
 	}
 	
 	@Override
-	public void updateCategory(Category category) {
-		// TODO Auto-generated method stub
-		Session session = entityManager.unwrap(Session.class);
-		
-		session.merge(category);
+	public Category updateCategory(Category category) {
+		return entityManager.merge(category);
 	}
 
 
 	@Override
 	public Category findCategoryById(int id) {
 		// TODO Auto-generated method stub
-		Session session = entityManager.unwrap(Session.class);
-		Category category =  session.find(Category.class, id);
+		Category category =  entityManager.find(Category.class, id);
 		return category;
 	}
 
 
 	@Override
 	public void deleteCategory(int id) {
-		Session session = entityManager.unwrap(Session.class);
-
-		Query query = session.createQuery("delete from Category where id=:categoryId");
+		Query query = entityManager.createQuery("delete from Category where id=:categoryId");
 		query.setParameter("categoryId", id);
 		
 		query.executeUpdate();
@@ -71,14 +59,12 @@ public class CategoryRepositoryImplementation implements CategoryRepository {
 
 	@Override
 	public Category findCategoryByName(String name) {
-		Session session = entityManager.unwrap(Session.class);
-
-		Query query = session.createQuery("from Category where name=:categoryName");
+		Query query = entityManager.createQuery("from Category where name=:categoryName");
 		query.setParameter("categoryName", name);
 		
-		Category newCategory = (Category) query.uniqueResult();
-		
-		return newCategory;
+		List<Category> categories = (List<Category>) query.getResultList();
+		if(categories.isEmpty()) return null;
+		return categories.get(0);
 	}
 
 }

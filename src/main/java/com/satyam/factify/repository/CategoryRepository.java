@@ -8,7 +8,7 @@ public interface CategoryRepository {
 	
 	public List<Category> findAll();
 	
-	public void createCategory(Category category);
+	public Category createCategory(Category category);
 	
 	public Category findCategoryById(int id);
 	
@@ -16,5 +16,5 @@ public interface CategoryRepository {
 	
 	public Category findCategoryByName(String name);
 
-	void updateCategory(Category category);
+	public Category updateCategory(Category category);
 }

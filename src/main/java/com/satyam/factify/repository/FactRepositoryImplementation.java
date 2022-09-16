@@ -3,15 +3,13 @@ package com.satyam.factify.repository;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
-import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.satyam.factify.model.Category;
 import com.satyam.factify.model.Fact;
-import com.satyam.factify.service.CategoryService;
 
 
 @Repository
@@ -20,14 +18,11 @@ public class FactRepositoryImplementation implements FactRepository {
 	@Autowired
 	EntityManager entityManager;
 	
-	@Autowired
-	CategoryService categoryService;
 
 	@Override
 	public List<Fact> findAll() {
-		Session session = entityManager.unwrap(Session.class);
 		
-		Query<Fact> query = session.createQuery("from Fact", Fact.class);
+		TypedQuery<Fact> query = entityManager.createQuery("from Fact", Fact.class);
 		
 		List<Fact> facts = query.getResultList();
 		
@@ -35,36 +30,27 @@ public class FactRepositoryImplementation implements FactRepository {
 	}
 
 	@Override
-	public void createFact(Fact fact) {
-		Session session = entityManager.unwrap(Session.class);
-//		Category category = categoryService.findCategoryById(fact.getCategory().getId());
-//		System.out.prinln(fact);
-		session.save(fact);
+	public Fact createFact(Fact fact) {
+		return entityManager.merge(fact);
 	}
 	
 	@Override
-	public void updateFact(Fact fact) {
-		Session session = entityManager.unwrap(Session.class);
-		session.merge(fact);
+	public Fact updateFact(Fact fact) {
+		return entityManager.merge(fact);
 	}
 
 	@Override
 	public Fact findFactById(int id) {
-		Session session = entityManager.unwrap(Session.class);
-		Fact fact =  session.find(Fact.class, id);
+		Fact fact =  entityManager.find(Fact.class, id);
 		return fact;
 	}
 
 	@Override
 	public void deleteFact(int id) {
-		Session session = entityManager.unwrap(Session.class);
-
-		Query query = session.createQuery("delete from Fact where id=:factId");
+		Query query = entityManager.createQuery("delete from Fact where id=:factId");
 		query.setParameter("factId", id);
 		
 		query.executeUpdate();
 	}
-
-
 
 }

@@ -35,25 +35,31 @@ public class CategoryServiceImplementation implements CategoryService {
 
 	@Override
 	@Transactional
-	public void createCategory(Category category) {
+	public Category createCategory(Category category) {
 		Category newCategory = categoryRepository.findCategoryByName(category.getName());
 		
 		if(newCategory != null) {
 			throw new CategoryAlreadyExistsException("Category with the given name already exists. Category name must be unique.");
 		}
-		categoryRepository.createCategory(category);
+		return categoryRepository.createCategory(category);
 	}
 	
 	@Override
 	@Transactional
-	public void updateCategory(int id, Category category) {
+	public Category updateCategory(int id, Category category) {
 		Category newCategory = categoryRepository.findCategoryById(id);
 		
 		if (newCategory == null) {
 			throw new CategoryNotFoundException("Category with the given ID not Found. ID: " + id);
 		}
 		
-		categoryRepository.updateCategory(category);
+		Category dbCategory = categoryRepository.findCategoryByName(category.getName());
+		
+		if(dbCategory != null) {
+			throw new CategoryAlreadyExistsException("Category with the given name already exists. Category name must be unique.");
+		}
+		
+		return categoryRepository.updateCategory(category);
 	}
 	
 

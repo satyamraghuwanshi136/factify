@@ -25,19 +25,19 @@ public class FactServiceImplementation implements FactService {
 
 	@Override
 	@Transactional
-	public void createFact(Fact fact) {
-		factRepository.createFact(fact);
+	public Fact createFact(Fact fact) {
+		return factRepository.createFact(fact);
 	}
 	
 	@Override
 	@Transactional
-	public void updateFact(int factId, Fact fact) {
+	public Fact updateFact(int factId, Fact fact) {
 		Fact newFact = factRepository.findFactById(factId);
 		
 		if(newFact == null) {
 			throw new FactNotFoundException("Fact with the given ID: "+ factId + " does Not Found");
 		}
-		factRepository.updateFact(fact);
+		return factRepository.updateFact(fact);
 	}
 
 	@Override

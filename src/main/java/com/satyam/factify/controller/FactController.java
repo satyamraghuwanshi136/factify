@@ -49,7 +49,6 @@ public class FactController {
 	
 	@PostMapping("/{categoryId}")
 	public ResponseEntity<Fact> createFact(@PathVariable("categoryId") int categoryId,@Valid @NotNull @RequestBody Fact fact) {
-		fact.setId(0);
 		Category category =  categoryService.findCategoryById(categoryId);
 		
 		if(category == null) {
@@ -58,9 +57,9 @@ public class FactController {
 		
 		fact.setCategory(category);
 		
-		factService.createFact(fact);
+		Fact factResponse = factService.createFact(fact);
 		
-		return new ResponseEntity<Fact>(fact, HttpStatus.CREATED);
+		return new ResponseEntity<Fact>(factResponse, HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/{categoryId}/{factId}")
@@ -74,8 +73,8 @@ public class FactController {
 		
 		
 		fact.setCategory(category);
-		factService.updateFact(factId, fact);
-		return new ResponseEntity<Fact>(fact, HttpStatus.CREATED);
+		Fact factResponse = factService.updateFact(factId, fact);
+		return new ResponseEntity<Fact>(factResponse, HttpStatus.CREATED);
 	}
 	
 	@DeleteMapping("/{id}")

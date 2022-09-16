@@ -53,7 +53,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler{
 	}
 	
 	@ExceptionHandler(FactNotFoundException.class)
-	public ResponseEntity<ErrorResponse> handleFactNotFoundException(CategoryNotFoundException exception) {
+	public ResponseEntity<ErrorResponse> handleFactNotFoundException(FactNotFoundException exception) {
 		ErrorResponse errorResponse = new ErrorResponse();
 
 		errorResponse.setStatus(HttpStatus.NOT_FOUND.toString());

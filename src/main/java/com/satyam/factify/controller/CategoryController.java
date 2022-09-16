@@ -16,11 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.satyam.factify.exceptionhandling.CategoryAlreadyExistsException;
-import com.satyam.factify.exceptionhandling.CategoryNotFoundException;
 import com.satyam.factify.model.Category;
 import com.satyam.factify.service.CategoryService;
 
@@ -58,17 +55,16 @@ public class CategoryController {
 			throw new RuntimeException("Category can not be null. provide data");
 		}
 		
-		category.setId(0);
-		categoryService.createCategory(category);
-		return new ResponseEntity<Category>(category, HttpStatus.CREATED);
+		Category responseCategory = categoryService.createCategory(category);
+		return new ResponseEntity<Category>(responseCategory, HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/{id}")
 	public ResponseEntity<Category> updateCategory(@PathVariable("id") int id,@Valid @RequestBody Category category) {
 		category.setId(id);
 		
-		categoryService.updateCategory(id,category);
-		return new ResponseEntity<Category>(category, HttpStatus.CREATED);
+		Category responseCategory = categoryService.updateCategory(id,category);
+		return new ResponseEntity<Category>(responseCategory, HttpStatus.CREATED);
 	}
 	
 	@DeleteMapping("/{id}")
